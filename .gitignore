@@ -1,0 +1,70 @@
+# See https://dart.dev/tools/pub/glossary#files-and-directories-created-by-pub for details.
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+*.lock
+*.cache
+*.tmp
+
+# IntelliJ / Android Studio / VS Code / Xcode settings
+*.iml
+*.ipr
+*.iws
+.idea/
+*.xcuserstate
+*.xcuserdata
+.vscode/
+
+# Flutter/Dart/Pub related
+.dart_tool/
+.pub/
+**/doc/api/
+.packages
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-version
+.merlin
+
+# Build outputs (generated)
+build/
+**/build/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/ServiceDefinitions.json
+**/Pods
+**/Runner.xcarchive
+**/*.xcworkspace
+**/*.xcuserstate
+**/*.xcuserdata
+**/DerivedData/
+ios/Pods
+ios/build/
+macos/Pods
+macos/build/
+linux/build/
+windows/build/
+web/build/
+
+# Android build artifacts
+android/.gradle/
+android/gradle/
+android/app/build/
+android/local.properties
+android/*.keystore
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# Firebase / Google Services (if present)
+**/google-services.json
+**/GoogleService-Info.plist
+
+# Symbolication / Obfuscation
+app.*.symbols
+app.*.map.json
