@@ -83,16 +83,16 @@ class RentPropertyScreenState extends State<RentPropertyScreen> {
   /// • For point searches, it uses the selectedPlace with a search radius.
   Future<List<Property>> fetchPropertiesWithGeo() async {
     print('fetchPropertiesWithGeo called with filters:');
-    print('  selectedPropertyTypes: $selectedPropertyTypes');
-    print('  selectedPriceRange: $selectedPriceRange');
-    print('  selectedLandAreaRange: $selectedLandAreaRange');
-    print('  selectedCity: $selectedCity');
-    print('  selectedDistrict: $selectedDistrict');
-    print('  selectedPincode: $selectedPincode');
-    print('  selectedPlace: $selectedPlace');
-    print('  geoSearchType: $geoSearchType');
-    print('  selectedPolygon: $selectedPolygon');
-    print('  searchRadius: $searchRadius');
+    print('selectedPropertyTypes: $selectedPropertyTypes');
+    print('selectedPriceRange: $selectedPriceRange');
+    print('selectedLandAreaRange: $selectedLandAreaRange');
+    print('selectedCity: $selectedCity');
+    print('selectedDistrict: $selectedDistrict');
+    print('selectedPincode: $selectedPincode');
+    print('selectedPlace: $selectedPlace');
+    print('geoSearchType: $geoSearchType');
+    print('selectedPolygon: $selectedPolygon');
+    print('searchRadius: $searchRadius');
 
     final propertyService = context.read<PropertyServiceUser>();
 

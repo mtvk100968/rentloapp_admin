@@ -78,18 +78,18 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     // Setup min/max defaults
     if (selectedPropertyType == PropertyType.Apartment) {
       minRentPrice = 5000;
-      maxRentPrice = 5000000;
+      maxRentPrice = 500000;
       minAreaInSqft = 500;
       maxAreaInSqft = 10000;
     } else if (selectedPropertyType == PropertyType.IndependetHouse ||
         selectedPropertyType == PropertyType.Villa) {
       minRentPrice = 5000;
-      maxRentPrice = 5000000;
+      maxRentPrice = 500000;
       minAreaInSqft = 500;
       maxAreaInSqft = 10000;
     } else {
       minRentPrice = 5000;
-      maxRentPrice = 5000000;
+      maxRentPrice = 500000;
       minAreaInSqft = 500;
       maxAreaInSqft = 10000;
     }
@@ -164,7 +164,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           rentPrice = 'rentPrice';
           areaInSqft = 'sqft';
           minRentPrice = 5000;
-          maxRentPrice = 5000000;
+          maxRentPrice = 500000;
           minAreaInSqft = 100;
           maxAreaInSqft = 10000;
           selectedRentPriceRange = RangeValues(minRentPrice, maxRentPrice);
@@ -174,7 +174,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           rentPrice = 'rentPrice';
           areaInSqft = 'sqft';
           minRentPrice = 5000;
-          maxRentPrice = 5000000;
+          maxRentPrice = 500000;
           minAreaInSqft = 100;
           maxAreaInSqft = 10000;
           selectedRentPriceRange = RangeValues(minRentPrice, maxRentPrice);
@@ -190,7 +190,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       rentPrice = 'rentPrice';
       areaInSqft = 'sqft';
       minRentPrice = 5000;
-      maxRentPrice = 5000000;
+      maxRentPrice = 500000;
       minAreaInSqft = 500;
       maxAreaInSqft = 10000;
       selectedRentPriceRange = RangeValues(minRentPrice, maxRentPrice);

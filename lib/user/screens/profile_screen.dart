@@ -97,6 +97,67 @@ class ProfileScreenState extends State<ProfileScreen> {
     await _loadUserData();
   }
 
+  // The method that starts phone verification
+  Future<void> _verifyPhoneNumber() async {
+    final phoneNumber = _phoneController.text.trim();
+    if (phoneNumber.isEmpty) {
+      _showErrorSnackBar("Please enter a valid phone number.");
+      return;
+    }
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // auto-resolve scenario
+        try {
+          await FirebaseAuth.instance.signInWithCredential(credential);
+          _showSuccessSnackBar("Phone auto-verified!");
+          _loadUserData();
+          Navigator.pop(context); // close the dialog
+        } catch (e) {
+          _showErrorSnackBar("Auto-verification failed: $e");
+        }
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        _showErrorSnackBar("Verification failed: ${e.message}");
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        setState(() {
+          _verificationId = verificationId;
+        });
+        _showSuccessSnackBar("Verification code sent to $phoneNumber");
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        setState(() {
+          _verificationId = verificationId;
+        });
+      },
+    );
+  }
+
+  // The method that uses the code typed by the user
+  Future<void> _signInWithSmsCode() async {
+    final smsCode = _codeController.text.trim();
+    if (_verificationId.isEmpty || smsCode.isEmpty) {
+      _showErrorSnackBar("Need verification ID and code!");
+      return;
+    }
+
+    try {
+      final credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId,
+        smsCode: _codeController.text.trim(),
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      _showSuccessSnackBar("Phone verified & user signed in!");
+      Navigator.pop(context); // close the dialog
+      _loadUserData();
+    } catch (e) {
+      _showErrorSnackBar('Failed to sign in with phone: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -329,6 +390,57 @@ class ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _sendCode() async {
+    final phoneNumber = _phoneController.text.trim();
+    if (phoneNumber.isEmpty) {
+      print("Phone number is empty!");
+      _showErrorSnackBar("Please enter a valid phone number.");
+      return;
+    }
+
+    try {
+      // signInWithPhoneNumber is a helper that starts phone verification.
+      // It should call FirebaseAuth.instance.verifyPhoneNumber under the hood.
+      await signInWithPhoneNumber(
+        phoneNumber,
+            (String verId) {
+          if (mounted) {
+            setState(() {
+              _verificationId = verId;
+            });
+          }
+        },
+            (FirebaseAuthException e) {
+          _showErrorSnackBar('Failed to verify phone number: ${e.message}');
+        },
+      );
+      _showSuccessSnackBar('Verification code sent.');
+    } catch (e) {
+      _showErrorSnackBar('Failed to send verification code');
+    }
+  }
+
+  Future<void> _signInWithPhone() async {
+    try {
+      final PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId,
+        smsCode: _codeController.text.trim(),
+      );
+      // signInWithPhoneAuthCredential should use the credential to sign in.
+      User? user = await signInWithPhoneAuthCredential(credential);
+      if (user != null && mounted) {
+        setState(() {
+          _currentUser = user;
+        });
+        await _loadUserData();
+        Navigator.pop(context); // close the dialog
+        _showSuccessSnackBar("Phone verified & user signed in!");
+      }
+    } catch (e) {
+      _showErrorSnackBar('Failed to sign in with phone number: $e');
+    }
+  }
+
   void _showPhoneNumberDialog() {
     showDialog(
       context: context,
@@ -344,6 +456,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   decoration: const InputDecoration(labelText: 'Phone Number'),
                   keyboardType: TextInputType.phone,
                 ),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _codeController,
                   decoration: const InputDecoration(
@@ -355,53 +468,18 @@ class ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           actions: [
-            TextButton(onPressed: _sendCode, child: const Text('Send Code')),
             TextButton(
-              onPressed: _signInWithPhone,
+              onPressed: _verifyPhoneNumber,
+              child: const Text('Send Code'),
+            ),
+            TextButton(
+              onPressed: _signInWithSmsCode,
               child: const Text('Sign In'),
             ),
           ],
         );
       },
     );
-  }
-
-  Future<void> _sendCode() async {
-    try {
-      await signInWithPhoneNumber(
-        _phoneController.text,
-        (String verId) {
-          if (mounted) {
-            setState(() => _verificationId = verId);
-          }
-        },
-        (FirebaseAuthException e) {
-          _showErrorSnackBar('Failed to verify phone number: ${e.message}');
-        },
-      );
-      _showSuccessSnackBar('Verification code sent.');
-    } catch (e) {
-      _showErrorSnackBar('Failed to send verification code');
-    }
-  }
-
-  Future<void> _signInWithPhone() async {
-    try {
-      final PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: _verificationId,
-        smsCode: _codeController.text,
-      );
-      User? user = await signInWithPhoneAuthCredential(credential);
-      if (user != null && mounted) {
-        setState(() {
-          _currentUser = user;
-        });
-        _loadUserData();
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      _showErrorSnackBar('Failed to sign in with phone number');
-    }
   }
 
   void _showErrorSnackBar(String message) {
