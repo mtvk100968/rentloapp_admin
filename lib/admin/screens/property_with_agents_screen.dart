@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rentloapp_admin/admin/services/property_service.dart';
 
+import '../../common/services_admin/property_service.dart';
 import 'assign_agent_list.dart';
 import 'customer_interaction_screen.dart';
 

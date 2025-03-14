@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:rentloapp_admin/admin/services/property_service.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../common/services_admin/property_service.dart';
 
 class AddAgentScreen extends StatefulWidget {
   const AddAgentScreen({Key? key}) : super(key: key);

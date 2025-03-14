@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../services/property_service.dart';
+import '../../common/services_admin/property_service.dart';
 import 'activity_log_screen.dart';
 import 'admin_page.dart';
 import 'agent_management_screen.dart';

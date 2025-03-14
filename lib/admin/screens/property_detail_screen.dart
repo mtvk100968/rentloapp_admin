@@ -5,7 +5,6 @@ import 'package:carousel_slider/carousel_controller.dart'
 as custom_carousel_controller;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../services/api_key_manager.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
   final String propertyId;

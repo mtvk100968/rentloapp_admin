@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:rentloapp_admin/admin/services/property_service.dart';
+
+import '../../common/services_admin/property_service.dart';
 
 class AssignAgentScreen extends StatefulWidget {
   final String propertyId;

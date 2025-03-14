@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../services/property_service.dart';
+import '../../common/services_admin/property_service.dart';
 
 class PropertyAssignAgentsPage extends StatefulWidget {
   @override
