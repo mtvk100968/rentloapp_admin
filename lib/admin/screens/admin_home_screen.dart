@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import '../../common/services_admin/property_service.dart';
 import 'activity_log_screen.dart';
 import 'admin_page.dart';
-import 'agent_management_screen.dart';
+import '../widgets/agent_management_screen.dart';
 import 'communication_screen.dart';
 
 class HomeScreen extends StatelessWidget {

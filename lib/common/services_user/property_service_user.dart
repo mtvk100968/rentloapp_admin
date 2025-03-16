@@ -469,24 +469,13 @@ class PropertyServiceUser {
     return properties;
   }
 
-  Future<List<Property>> getAllProperties({String? searchQuery}) async {
-    try {
-      Query<Map<String, dynamic>> query = _firestore.collection(collectionPath);
-      if (searchQuery != null && searchQuery.isNotEmpty) {
-        query = query
-            .where('name', isGreaterThanOrEqualTo: searchQuery)
-            .where('name', isLessThanOrEqualTo: searchQuery + '\uf8ff');
-      }
-      QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
-      return snapshot.docs
-          .map((doc) => Property.fromMap(doc.id, doc.data()))
-          .toList();
-    } catch (e, stacktrace) {
-      print('Error fetching all properties: $e');
-      print(stacktrace);
-      Error.throwWithStackTrace(
-          Exception('Failed to fetch properties'), stacktrace);
-    }
+  Future<List<Property>> getAllProperties() async {
+    QuerySnapshot snapshot =
+    await FirebaseFirestore.instance.collection('properties').get();
+
+    return snapshot.docs
+        .map((doc) => Property.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>))
+        .toList();
   }
 
   Future<void> addProposedPrice(

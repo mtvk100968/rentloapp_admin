@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import '../user/components/bottom_nav_bar.dart';
+
 
 // Navigator keys for each tab
 final GlobalKey<NavigatorState> rentPropertyNavigatorKey =

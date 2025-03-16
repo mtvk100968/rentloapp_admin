@@ -1,22 +1,20 @@
-// lib/views/property_map_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:rentloapp_admin/user/screens/property_details_screen.dart';
-import '../common/models_user/property_model.dart';
-import '../utils/format.dart';
-import 'components/maps_related/marker.dart';
-import 'components/property_card2.dart';
+import '../../models/property_model.dart';
+import '../../../user/components/maps_related/marker.dart';
+import '../../../user/components/property_card2.dart';
+import '../../../user/screens/property_details_screen.dart';
+import '../../../utils/format.dart';
 
 class PropertyMapView extends StatefulWidget {
   final List<Property> properties;
-  final LatLng? center; // New parameter
+  final LatLng? center; // Optional parameter to specify initial center
 
   const PropertyMapView({
-    super.key,
+    Key? key,
     required this.properties,
     this.center,
-  });
+  }) : super(key: key);
 
   @override
   PropertyMapViewState createState() => PropertyMapViewState();
@@ -25,13 +23,10 @@ class PropertyMapView extends StatefulWidget {
 class PropertyMapViewState extends State<PropertyMapView> {
   late GoogleMapController mapController;
 
-  Set<Marker> _markers = {}; // Standard markers
+  Set<Marker> _markers = {};
 
   // Create a ClusterManagerId
-  final ClusterManagerId _clusterManagerId =
-  const ClusterManagerId('propertyClusterManager');
-
-  // Create a ClusterManager
+  final ClusterManagerId _clusterManagerId = const ClusterManagerId('propertyClusterManager');
   late ClusterManager _clusterManager;
 
   @override
@@ -44,7 +39,6 @@ class PropertyMapViewState extends State<PropertyMapView> {
       onClusterTap: _onClusterTap,
     );
 
-    // Wait for the first frame before adding markers
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _addCustomMarkers();
     });
@@ -56,35 +50,31 @@ class PropertyMapViewState extends State<PropertyMapView> {
 
     for (Property property in widget.properties) {
       // Format the price
-      final String priceText = property.rentPrice != null
-          ? formatPrice(property.rentPrice! as double)
-          : 'N/A';
+      final String priceText = formatPrice(property.rentPrice.toDouble());
 
       // Create custom marker with the formatted price
       final BitmapDescriptor customIcon =
       await CustomMarker.createMarker(priceText);
 
-      // Create marker for each property
+      // Create marker
       markers.add(
         Marker(
           markerId: MarkerId(property.propertyId),
           position: LatLng(property.latitude, property.longitude),
           icon: customIcon,
           onTap: () => _showPropertyCard(property),
-          // Associate this marker with the ClusterManager
+          // Associate marker with ClusterManager
           clusterManagerId: _clusterManagerId,
         ),
       );
     }
 
-    // Update state to display the markers
     setState(() {
       _markers = markers;
       print("Markers added: ${_markers.length}");
     });
   }
 
-  // // Callback when a cluster is tapped
   void _onClusterTap(Cluster cluster) async {
     // Retrieve the current camera position
     final LatLng currentCenter = await mapController.getLatLng(
@@ -94,10 +84,8 @@ class PropertyMapViewState extends State<PropertyMapView> {
       ),
     );
 
-    // Define the new zoom level
-    final double newZoomLevel = 12.0; // Adjust this value as needed
-
-    // Animate the camera to the cluster's position with the new zoom level
+    // Zoom in on the cluster
+    final double newZoomLevel = 12.0;
     mapController.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
@@ -114,12 +102,9 @@ class PropertyMapViewState extends State<PropertyMapView> {
       builder: (context) {
         return PropertyCard2(
           property: property,
-          isFavorited: false, // Update with your favorite logic if needed
-          onFavoriteToggle: (bool newValue) {
-            // Implement your favorite toggle logic here
-          },
+          isFavorited: false,
+          onFavoriteToggle: (bool newValue) {},
           onTap: () {
-            // Navigate to the property details screen
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -135,38 +120,47 @@ class PropertyMapViewState extends State<PropertyMapView> {
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
 
-    // Ensure markers are added after the map is created
+    // Add markers once map is created
     _addCustomMarkers();
 
-    // Adjust initial zoom if needed
-    mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(20.5937, 78.9629),
-          zoom: 10,
+    // If a center is provided, animate there; otherwise default to India
+    if (widget.center != null) {
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: widget.center!,
+            zoom: 14, // adjust as you like
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      // Default to India or any fallback
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          const CameraPosition(
+            target: LatLng(20.5937, 78.9629),
+            zoom: 5,
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: Container(
-        color: Colors.white,
-        child: SizedBox.expand(
-          child: GoogleMap(
-            mapType: MapType.normal,
-            initialCameraPosition: const CameraPosition(
-              target: LatLng(20.5937, 78.9629), // Center of India
-              zoom: 5,
-            ),
-            onMapCreated: _onMapCreated,
-            markers: _markers,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true, // Enable default location button
-            clusterManagers: {_clusterManager}, // Ensure this works correctly
+      child: SizedBox.expand(
+        child: GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(20.5937, 78.9629),
+            zoom: 5,
           ),
+          onMapCreated: _onMapCreated,
+          markers: _markers,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: true,
+          clusterManagers: {_clusterManager},
         ),
       ),
     );
